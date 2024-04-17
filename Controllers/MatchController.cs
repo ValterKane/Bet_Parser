@@ -79,7 +79,7 @@ namespace _1XBetParser.Controllers
                                     MatchId = RootObject.Value[i].I,
                                     Opponent1 = RootObject.Value[i].O1,
                                     Opponent2 = RootObject.Value[i].O2,
-                                    Match_time = UnixTimeStampToDateTime(RootObject.Value[i].S).ToString(),
+                                    MatchTime = UnixTimeStampToDateTime(RootObject.Value[i].S).ToString(),
                                 });
                             }
                         }

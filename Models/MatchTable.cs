@@ -13,7 +13,7 @@ public partial class MatchTable
 
     public int? ChampId { get; set; }
 
-    public string? Match_time { get; set; }
+    public string? MatchTime { get; set; }
 
     public virtual ICollection<BetsTable> BetsTables { get; set; } = new List<BetsTable>();
 

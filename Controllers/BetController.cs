@@ -60,7 +60,7 @@ namespace _1XBetParser.Controllers
                                     {
                                         list.Add(new BetsTable()
                                         {
-                                            BetID = sg.CI,
+                                            BetId = sg.CI,
                                             BetName = sg.PN,
                                             BetTypeId = sg.E[i].T,
                                             MatchId = game.I,
@@ -74,7 +74,7 @@ namespace _1XBetParser.Controllers
                                     {
                                         list.Add(new BetsTable()
                                         {
-                                            BetID = sg.CI,
+                                            BetId = sg.CI,
                                             BetName = sg.PN,
                                             BetTypeId = sg.E[i].T,
                                             MatchId = game.I,

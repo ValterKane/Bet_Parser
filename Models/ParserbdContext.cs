@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace _1XBetParser.Models;
 
 public partial class ParserbdContext : DbContext
@@ -27,22 +26,25 @@ public partial class ParserbdContext : DbContext
     public virtual DbSet<TypeBetTable> TypeBetTables { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySQL("server=localhost; Port=3306; uid=root; pwd=12761276Kain!; database=parserbd;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseMySQL("server=localhost;port=3306;user=root;password=12761276Kain!;database=parserbd");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BetsTable>(entity =>
         {
-            entity.HasKey(e => new { e.MatchId, e.BetTypeId, e.BetID }).HasName("PRIMARY");
+            entity.HasKey(e => new { e.MatchId, e.BetTypeId, e.BetId }).HasName("PRIMARY");
 
             entity.ToTable("bets_table");
 
             entity.HasIndex(e => e.BetTypeId, "bet_type_FK_idx");
 
             entity.Property(e => e.MatchId).HasColumnName("match_id");
-            entity.Property(e => e.BetID).HasColumnName("bet_ID");
-            entity.Property(e => e.BetName).HasColumnName("bet_name").HasMaxLength(255);
             entity.Property(e => e.BetTypeId).HasColumnName("bet_type_id");
+            entity.Property(e => e.BetId).HasColumnName("bet_ID");
+            entity.Property(e => e.BetName)
+                .HasMaxLength(255)
+                .HasColumnName("bet_name");
             entity.Property(e => e.BetValue)
                 .HasPrecision(10)
                 .HasColumnName("bet_value");
@@ -93,8 +95,9 @@ public partial class ParserbdContext : DbContext
 
             entity.Property(e => e.MatchId).HasColumnName("match_id");
             entity.Property(e => e.ChampId).HasColumnName("champ_id");
-            entity.Property(e => e.Match_time).HasColumnName("match_time").HasMaxLength(255);
-
+            entity.Property(e => e.MatchTime)
+                .HasMaxLength(255)
+                .HasColumnName("match_time");
             entity.Property(e => e.Opponent1)
                 .HasMaxLength(255)
                 .HasColumnName("opponent_1");
@@ -105,10 +108,7 @@ public partial class ParserbdContext : DbContext
             entity.HasOne(d => d.Champ).WithMany(p => p.MatchTables)
                 .HasForeignKey(d => d.ChampId)
                 .HasConstraintName("champ_FK");
-
-            
-
-            });
+        });
 
         modelBuilder.Entity<SportTable>(entity =>
         {

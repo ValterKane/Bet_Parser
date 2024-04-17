@@ -7,13 +7,13 @@ public partial class BetsTable
 {
     public int MatchId { get; set; }
 
-    public int BetID { get; set; }
-
     public int BetTypeId { get; set; }
 
     public decimal? BetValue { get; set; }
 
-    public string BetName { get; set; }
+    public string? BetName { get; set; }
+
+    public int BetId { get; set; }
 
     public virtual TypeBetTable BetType { get; set; } = null!;
 
