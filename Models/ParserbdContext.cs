@@ -33,13 +33,15 @@ public partial class ParserbdContext : DbContext
     {
         modelBuilder.Entity<BetsTable>(entity =>
         {
-            entity.HasKey(e => new { e.MatchId, e.BetTypeId }).HasName("PRIMARY");
+            entity.HasKey(e => new { e.MatchId, e.BetTypeId, e.BetID }).HasName("PRIMARY");
 
             entity.ToTable("bets_table");
 
             entity.HasIndex(e => e.BetTypeId, "bet_type_FK_idx");
 
             entity.Property(e => e.MatchId).HasColumnName("match_id");
+            entity.Property(e => e.BetID).HasColumnName("bet_ID");
+            entity.Property(e => e.BetName).HasColumnName("bet_name").HasMaxLength(255);
             entity.Property(e => e.BetTypeId).HasColumnName("bet_type_id");
             entity.Property(e => e.BetValue)
                 .HasPrecision(10)
@@ -91,17 +93,22 @@ public partial class ParserbdContext : DbContext
 
             entity.Property(e => e.MatchId).HasColumnName("match_id");
             entity.Property(e => e.ChampId).HasColumnName("champ_id");
+            entity.Property(e => e.Match_time).HasColumnName("match_time").HasMaxLength(255);
+
             entity.Property(e => e.Opponent1)
-                .HasMaxLength(45)
+                .HasMaxLength(255)
                 .HasColumnName("opponent_1");
             entity.Property(e => e.Opponent2)
-                .HasMaxLength(45)
+                .HasMaxLength(255)
                 .HasColumnName("opponent_2");
 
             entity.HasOne(d => d.Champ).WithMany(p => p.MatchTables)
                 .HasForeignKey(d => d.ChampId)
                 .HasConstraintName("champ_FK");
-        });
+
+            
+
+            });
 
         modelBuilder.Entity<SportTable>(entity =>
         {

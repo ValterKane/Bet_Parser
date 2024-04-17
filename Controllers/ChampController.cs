@@ -2,11 +2,6 @@
 using _1XBetParser.Models;
 using _1XBetParser.Parsers;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace _1XBetParser.Controllers
 {
@@ -26,7 +21,7 @@ namespace _1XBetParser.Controllers
         {
             if (DBContext.ChampTables.Local.Count > 0)
             {
-                foreach (var item in DBContext.ChampTables.Local)
+                foreach (ChampTable item in DBContext.ChampTables.Local)
                 {
                     if (item.ChampId == id)
                     {
@@ -43,11 +38,11 @@ namespace _1XBetParser.Controllers
 
         public async Task<bool> LoadData()
         {
-            this.DBContext.SportTables.Load();
-            this.DBContext.ChampTables.Load();
+            DBContext.SportTables.Load();
+            DBContext.ChampTables.Load();
             if (DBContext != null)
             {
-                foreach (var item in this.DBContext.SportTables.Local)
+                foreach (SportTable item in DBContext.SportTables.Local)
                 {
                     _parser.InnerParams["sport"] = item.SportId.ToString();
                     RootObject = await _parser.Parse();
@@ -56,7 +51,7 @@ namespace _1XBetParser.Controllers
                     {
                         if (RootObject.Value[i].SC == null)
                         {
-                            ChampTable _temp = new ChampTable()
+                            ChampTable _temp = new()
                             {
                                 ChampId = RootObject.Value[i].LI,
                                 ChampRuName = RootObject.Value[i].L,
@@ -73,7 +68,7 @@ namespace _1XBetParser.Controllers
                         {
                             for (int j = 0; j < RootObject.Value[i].SC.Count(); j++)
                             {
-                                ChampTable _temp = new ChampTable()
+                                ChampTable _temp = new()
                                 {
                                     ChampId = RootObject.Value[i].SC[j].LI,
                                     ChampRuName = RootObject.Value[i].SC[j].L,
@@ -87,7 +82,7 @@ namespace _1XBetParser.Controllers
                                 }
                             }
                         }
-                        
+
 
                     }
                 }

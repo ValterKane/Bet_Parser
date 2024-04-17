@@ -36,14 +36,21 @@ namespace _1XBetParser.Controllers
             }
         }
 
- 
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dateTime;
+        }
+
         public async Task<bool> LoadData()
         {
-            DBContext.ChampTables.Load();
-            DBContext.MatchTables.Load();
 
             if (DBContext != null)
             {
+                DBContext.ChampTables.Load();
+                DBContext.MatchTables.Load();
+
                 List<MatchTable> firstHalf = new();
                 List<MatchTable> secondHalf = new();
                 var count = DBContext.ChampTables.Local.Count;
@@ -54,12 +61,13 @@ namespace _1XBetParser.Controllers
 
                 Task t1 = Task.Run(async () =>
                 {
+                    await Task.Yield();
                     await semaphore.WaitAsync();
                     try
                     {
                         foreach (ChampTable? item in firstHalfData)
                         {
-                            await Task.Yield();
+                            
                             _parser.InnerParams["sports"] = item.SportId.ToString();
                             _parser.InnerParams["champs"] = item.ChampId.ToString();
                             RootObject = await _parser.Parse();
@@ -71,6 +79,7 @@ namespace _1XBetParser.Controllers
                                     MatchId = RootObject.Value[i].I,
                                     Opponent1 = RootObject.Value[i].O1,
                                     Opponent2 = RootObject.Value[i].O2,
+                                    Match_time = UnixTimeStampToDateTime(RootObject.Value[i].S).ToString(),
                                 });
                             }
                         }
@@ -79,13 +88,14 @@ namespace _1XBetParser.Controllers
                 });
 
                 Task t2 = Task.Run(async () =>
-                { 
+                {
+                    await Task.Yield();
                     await semaphore.WaitAsync();
                     try
                     {
                         foreach (ChampTable? item in secondHalfData)
                         {
-                            await Task.Yield();
+                            
                             _parser.InnerParams["sports"] = item.SportId.ToString();
                             _parser.InnerParams["champs"] = item.ChampId.ToString();
                             RootObject = await _parser.Parse();
