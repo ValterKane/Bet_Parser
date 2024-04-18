@@ -6,6 +6,7 @@
     <RootNamespace>_1XBetParser</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <StartupObject>_1XBetParser.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

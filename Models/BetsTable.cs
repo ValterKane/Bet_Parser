@@ -9,7 +9,7 @@ public partial class BetsTable
 
     public int BetTypeId { get; set; }
 
-    public decimal? BetValue { get; set; }
+    public double? BetValue { get; set; }
 
     public string? BetName { get; set; }
 

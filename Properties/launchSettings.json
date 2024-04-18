@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "1XBetParser": {
+      "commandName": "Project",
+      "commandLineArgs": "-single_parse 523694154"
+    }
+  }
+}

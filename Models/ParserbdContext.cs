@@ -45,9 +45,7 @@ public partial class ParserbdContext : DbContext
             entity.Property(e => e.BetName)
                 .HasMaxLength(255)
                 .HasColumnName("bet_name");
-            entity.Property(e => e.BetValue)
-                .HasPrecision(10)
-                .HasColumnName("bet_value");
+            entity.Property(e => e.BetValue).HasColumnName("bet_value");
 
             entity.HasOne(d => d.BetType).WithMany(p => p.BetsTables)
                 .HasForeignKey(d => d.BetTypeId)
@@ -94,16 +92,46 @@ public partial class ParserbdContext : DbContext
             entity.HasIndex(e => e.ChampId, "champ_FK_idx");
 
             entity.Property(e => e.MatchId).HasColumnName("match_id");
+            entity.Property(e => e.AirPressureOnMatch)
+                .HasMaxLength(45)
+                .HasColumnName("air_pressure_on_match");
             entity.Property(e => e.ChampId).HasColumnName("champ_id");
+            entity.Property(e => e.DownfallOnMatch)
+                .HasMaxLength(45)
+                .HasColumnName("downfall_on_match");
+            entity.Property(e => e.HumidityOnMatch)
+                .HasMaxLength(45)
+                .HasColumnName("humidity_on_match");
+            entity.Property(e => e.MatchPlace)
+                .HasMaxLength(100)
+                .HasColumnName("match_place");
+            entity.Property(e => e.MatchSubtype)
+                .HasMaxLength(100)
+                .HasColumnName("match_subtype");
+            entity.Property(e => e.MatchTablecol)
+                .HasMaxLength(45)
+                .HasColumnName("match_tablecol");
             entity.Property(e => e.MatchTime)
                 .HasMaxLength(255)
                 .HasColumnName("match_time");
+            entity.Property(e => e.MatchType)
+                .HasMaxLength(100)
+                .HasColumnName("match_type");
             entity.Property(e => e.Opponent1)
                 .HasMaxLength(255)
                 .HasColumnName("opponent_1");
             entity.Property(e => e.Opponent2)
                 .HasMaxLength(255)
                 .HasColumnName("opponent_2");
+            entity.Property(e => e.Temperture)
+                .HasMaxLength(45)
+                .HasColumnName("temperture");
+            entity.Property(e => e.WetherType)
+                .HasMaxLength(45)
+                .HasColumnName("wether_type");
+            entity.Property(e => e.WindOnMatch)
+                .HasMaxLength(45)
+                .HasColumnName("wind_on_match");
 
             entity.HasOne(d => d.Champ).WithMany(p => p.MatchTables)
                 .HasForeignKey(d => d.ChampId)

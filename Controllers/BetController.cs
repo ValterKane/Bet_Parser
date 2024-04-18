@@ -29,6 +29,83 @@ namespace _1XBetParser.Controllers
             throw new NotImplementedException();
         }
 
+        public async Task<bool> LoadData(int MatchID)
+        {
+            if (DBContext != null)
+            {
+
+                if (DBContext.BetsTables.Any(t => t.MatchId == MatchID))
+                {
+                    return false;
+                }
+                else
+                {
+                    var Match = DBContext.MatchTables.Where(t => t.MatchId == MatchID).Include(u => u.Champ).ToList();
+
+                    foreach (MatchTable item in Match)
+                    {
+                        _parser.InnerParams["sports"] = item.Champ.SportId.ToString();
+                        _parser.InnerParams["champs"] = item.ChampId.ToString();
+                        _parser.InnerParams["subGames"] = item.MatchId.ToString();
+                        RootObject = await _parser.Parse();
+
+                        var data = RootObject.Value.Where(t => t.SG != null).ToList();
+
+                        if (data.Count > 0)
+                        {
+                            data = data.Where(t => t.SG.Count() != 0).ToList();
+                            foreach (var game in data)
+                            {
+                                foreach (SG sg in game.SG)
+                                {
+                                    List<BetsTable> list = new List<BetsTable>();
+
+                                    if (sg.E.Count() > 10)
+                                    {
+                                        for (int i = 0; i < 10; i++)
+                                        {
+                                            list.Add(new BetsTable()
+                                            {
+                                                BetId = sg.CI,
+                                                BetName = $"{sg.PN}:{sg.TG}",
+                                                BetTypeId = sg.E[i].T,
+                                                MatchId = game.I,
+                                                BetValue = (double)sg.E[i].C,
+                                            });
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for (int i = 0; i < sg.E.Count(); i++)
+                                        {
+                                            list.Add(new BetsTable()
+                                            {
+                                                BetId = sg.CI,
+                                                BetName = $"{sg.PN}:{sg.TG}",
+                                                BetTypeId = sg.E[i].T,
+                                                MatchId = game.I,
+                                                BetValue = (double)sg.E[i].C,
+                                            });
+                                        }
+                                    }
+
+                                    if (list.Count > 0)
+                                        DBContext.BetsTables.AddRange(list);
+                                }
+
+                            }
+                        }
+
+                    }
+                    DBContext.SaveChanges();
+                    return true;
+                }
+
+                
+            }
+            return false;
+        }
+
         public async Task<bool> LoadData()
         {
 
@@ -37,7 +114,7 @@ namespace _1XBetParser.Controllers
                 DBContext.ChampTables.Load();
                 DBContext.MatchTables.Load();
 
-                foreach (MatchTable item in DBContext.MatchTables.Local)
+                foreach (MatchTable item in DBContext.MatchTables.Local.ToList()[0..100])
                 {
                     _parser.InnerParams["sports"] = item.Champ.SportId.ToString();
                     _parser.InnerParams["champs"] = item.ChampId.ToString();
@@ -61,10 +138,10 @@ namespace _1XBetParser.Controllers
                                         list.Add(new BetsTable()
                                         {
                                             BetId = sg.CI,
-                                            BetName = sg.PN,
+                                            BetName = $"{sg.PN}:{sg.TG}",
                                             BetTypeId = sg.E[i].T,
                                             MatchId = game.I,
-                                            BetValue = (decimal)sg.E[i].C,
+                                            BetValue = (double)sg.E[i].C,
                                         });
                                     }
                                 }
@@ -75,10 +152,10 @@ namespace _1XBetParser.Controllers
                                         list.Add(new BetsTable()
                                         {
                                             BetId = sg.CI,
-                                            BetName = sg.PN,
+                                            BetName = $"{sg.PN}:{sg.TG}",
                                             BetTypeId = sg.E[i].T,
                                             MatchId = game.I,
-                                            BetValue = (decimal)sg.E[i].C,
+                                            BetValue = (double)sg.E[i].C,
                                         });
                                     }
                                 }

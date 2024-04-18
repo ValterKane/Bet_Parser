@@ -66,21 +66,45 @@ namespace _1XBetParser.Controllers
                     try
                     {
                         foreach (ChampTable? item in firstHalfData)
-                        {
-                            
+                        {      
                             _parser.InnerParams["sports"] = item.SportId.ToString();
                             _parser.InnerParams["champs"] = item.ChampId.ToString();
                             RootObject = await _parser.Parse();
                             for (int i = 0; i < RootObject.Value.Count(); i++)
                             {
-                                firstHalf.Add(new MatchTable()
+                                if (RootObject.Value[i].MIO != null && RootObject.Value[i].MIS != null)
                                 {
-                                    ChampId = RootObject.Value[i].LI,
-                                    MatchId = RootObject.Value[i].I,
-                                    Opponent1 = RootObject.Value[i].O1,
-                                    Opponent2 = RootObject.Value[i].O2,
-                                    MatchTime = UnixTimeStampToDateTime(RootObject.Value[i].S).ToString(),
-                                });
+                                    firstHalf.Add(new MatchTable()
+                                    {
+                                        ChampId = RootObject.Value[i].LI,
+                                        MatchId = RootObject.Value[i].I,
+                                        Opponent1 = RootObject.Value[i].O1,
+                                        Opponent2 = RootObject.Value[i].O2,
+                                        MatchTime = UnixTimeStampToDateTime(RootObject.Value[i].S).ToString(),
+                                        MatchType = RootObject.Value[i].MIO.TSt,
+                                        MatchSubtype = RootObject.Value[i].MIO.SSc,
+                                        MatchPlace = RootObject.Value[i].MIO.Loc,
+                                        Temperture = RootObject.Value[i].MIS.Where(t=>t.K==9).FirstOrDefault()?.V,
+                                        AirPressureOnMatch = RootObject.Value[i].MIS.Where(t => t.K == 25).FirstOrDefault()?.V,
+                                        WetherType = RootObject.Value[i].MIS.Where(t => t.K == 21).FirstOrDefault()?.V,
+                                        WindOnMatch = RootObject.Value[i].MIS.Where(t => t.K == 24).FirstOrDefault()?.V,
+                                        DownfallOnMatch = RootObject.Value[i].MIS.Where(t => t.K == 35).FirstOrDefault()?.V,
+                                        HumidityOnMatch = RootObject.Value[i].MIS.Where(t => t.K == 27).FirstOrDefault()?.V,
+                                    });
+                                }
+                                else
+                                {
+                                    firstHalf.Add(new MatchTable()
+                                    {
+                                        ChampId = RootObject.Value[i].LI,
+                                        MatchId = RootObject.Value[i].I,
+                                        Opponent1 = RootObject.Value[i].O1,
+                                        Opponent2 = RootObject.Value[i].O2,
+                                        MatchTime = UnixTimeStampToDateTime(RootObject.Value[i].S).ToString(),
+
+                                    });
+                                }
+                                
                             }
                         }
                     }
@@ -95,26 +119,48 @@ namespace _1XBetParser.Controllers
                     {
                         foreach (ChampTable? item in secondHalfData)
                         {
-                            
                             _parser.InnerParams["sports"] = item.SportId.ToString();
                             _parser.InnerParams["champs"] = item.ChampId.ToString();
                             RootObject = await _parser.Parse();
                             for (int i = 0; i < RootObject.Value.Count(); i++)
                             {
-                                secondHalf.Add(new MatchTable()
+                                if (RootObject.Value[i].MIO != null && RootObject.Value[i].MIS != null)
                                 {
-                                    ChampId = RootObject.Value[i].LI,
-                                    MatchId = RootObject.Value[i].I,
-                                    Opponent1 = RootObject.Value[i].O1,
-                                    Opponent2 = RootObject.Value[i].O2,
-                                });
+                                    secondHalf.Add(new MatchTable()
+                                    {
+                                        ChampId = RootObject.Value[i].LI,
+                                        MatchId = RootObject.Value[i].I,
+                                        Opponent1 = RootObject.Value[i].O1,
+                                        Opponent2 = RootObject.Value[i].O2,
+                                        MatchTime = UnixTimeStampToDateTime(RootObject.Value[i].S).ToString(),
+                                        MatchType = RootObject.Value[i].MIO.TSt,
+                                        MatchSubtype = RootObject.Value[i].MIO.SSc,
+                                        MatchPlace = RootObject.Value[i].MIO.Loc,
+                                        Temperture = RootObject.Value[i].MIS.Where(t => t.K == 9).FirstOrDefault()?.V,
+                                        AirPressureOnMatch = RootObject.Value[i].MIS.Where(t => t.K == 25).FirstOrDefault()?.V + "мм.рт.ст.",
+                                        WetherType = RootObject.Value[i].MIS.Where(t => t.K == 21).FirstOrDefault()?.V,
+                                        WindOnMatch = RootObject.Value[i].MIS.Where(t => t.K == 24).FirstOrDefault()?.V,
+                                        DownfallOnMatch = RootObject.Value[i].MIS.Where(t => t.K == 35).FirstOrDefault()?.V + "%",
+                                        HumidityOnMatch = RootObject.Value[i].MIS.Where(t => t.K == 27).FirstOrDefault()?.V + "%",
+                                    });
+                                }
+                                else
+                                {
+                                    secondHalf.Add(new MatchTable()
+                                    {
+                                        ChampId = RootObject.Value[i].LI,
+                                        MatchId = RootObject.Value[i].I,
+                                        Opponent1 = RootObject.Value[i].O1,
+                                        Opponent2 = RootObject.Value[i].O2,
+                                        MatchTime = UnixTimeStampToDateTime(RootObject.Value[i].S).ToString(),
 
+                                    });
+                                }
                             }
                         }
                     }
                     finally { semaphore.Release(); }
                     
-                    semaphore.Release();
                 });
                 
                 Task.WaitAll(t1, t2);

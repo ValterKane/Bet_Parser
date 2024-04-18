@@ -67,6 +67,8 @@ namespace _1XBetParser.JSON
 
     public class MIO
     {
+        public string Loc { get; set; }
+        public string SSc { get; set; }
         public string TSt { get; set; }
     }
 
