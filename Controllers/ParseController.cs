@@ -1,16 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace _1XBetParser.Controllers
 {
     public class ParseController
     {
-        IServiceCollection Services;
-        ServiceProvider _provider;
+        private readonly IServiceCollection Services;
+        private readonly ServiceProvider _provider;
         public ParseController(IServiceCollection Services)
         {
             this.Services = Services;
@@ -19,7 +14,7 @@ namespace _1XBetParser.Controllers
 
         private void ColoraizeCW(bool status, string log_Info)
         {
-            var _base_Color = Console.ForegroundColor;
+            ConsoleColor _base_Color = Console.ForegroundColor;
             Console.Write(log_Info);
             if (status)
             {
@@ -40,14 +35,15 @@ namespace _1XBetParser.Controllers
 
             if ((bool)flag == true)
             {
-                var Rem = _provider.GetService<Remover>();
+                Remover? Rem = _provider.GetService<Remover>();
                 Rem.Remove();
             }
 
             try
             {
-                var TypeBetController = _provider.GetService<TypeBetController>();
-                var status = TypeBetController.LoadData().Result;
+                Console.WriteLine("Cycle Start:");
+                TypeBetController? TypeBetController = _provider.GetService<TypeBetController>();
+                bool status = TypeBetController.LoadData().Result;
 
                 ColoraizeCW(status, "Stage #1{Type of bets parse):");
 
@@ -74,9 +70,9 @@ namespace _1XBetParser.Controllers
         }
 
         public async void LoadBets(int MatchID)
-        { 
+        {
             BetController? BetController = _provider.GetService<BetController>();
-            var status = await BetController?.LoadData(MatchID);
+            bool status = await BetController?.LoadData(MatchID);
             ColoraizeCW(status, $"Bets of match({MatchID}) load:");
         }
     }

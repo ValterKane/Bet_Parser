@@ -33,7 +33,7 @@ namespace _1XBetParser
             if (args[0] == "-single_parse" && _cycle_parse_flag == false)
             {
                 pC.LoadBets(Convert.ToInt32(args[1]));
-                Console.ReadLine();
+                Console.ReadKey();
             }
             if (args[0] == "-cycle_parse" && _cycle_parse_flag == false)
             {
